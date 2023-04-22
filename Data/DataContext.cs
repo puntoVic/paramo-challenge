@@ -1,25 +1,16 @@
-﻿using Entities;
+﻿using Data.Contracts;
+using Entities;
 using Entities.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 
 namespace Data
 {
-    internal class DataContext
+    internal class DataContext: IDataContext
     {
         public List<IUser> Users { get; set; }
-        public StreamReader ReadUsersFromFile()
-        {
-            var path = Directory.GetCurrentDirectory() + "/Files/Users.txt";
-
-            FileStream fileStream = new FileStream(path, FileMode.Open);
-
-            StreamReader reader = new StreamReader(fileStream);
-            return reader;
-        }
-
+        
         public DataContext()
         {
             Users = new List<IUser>();
@@ -44,6 +35,22 @@ namespace Data
                 Users.Add(user);
             }
             reader.Close();
+        }
+
+        public bool IsDuplicated(IUser user)
+        {
+            
+            return Users.Where(x => x.Email == user.Email || x.Phone == user.Phone) != null; 
+        }
+
+        public StreamReader ReadUsersFromFile()
+        {
+            var path = Directory.GetCurrentDirectory() + "/Files/Users.txt";
+
+            FileStream fileStream = new FileStream(path, FileMode.Open);
+
+            StreamReader reader = new StreamReader(fileStream);
+            return reader;
         }
     }
 }
