@@ -3,6 +3,7 @@ using Common.Helpers;
 using Data.Contracts;
 using Entities.Interfaces;
 using System;
+using System.Threading.Tasks;
 
 namespace Data.DataAccess
 {
@@ -14,7 +15,7 @@ namespace Data.DataAccess
         {
             this.dataContext = dataContext;
         }
-        public IUser CreateUser(IUser user)
+        public async Task<IUser> CreateUser(IUser user)
         {
             if (dataContext.IsDuplicated(user))
             {

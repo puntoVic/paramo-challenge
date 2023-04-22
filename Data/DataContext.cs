@@ -4,15 +4,19 @@ using Entities.Interfaces;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Data
 {
     internal class DataContext: IDataContext
     {
         public List<IUser> Users { get; set; }
-        
+
+        readonly string path = string.Empty;
+
         public DataContext()
         {
+            path = Directory.GetCurrentDirectory() + "/Files/Users.txt";
             Users = new List<IUser>();
             var reader = ReadUsersFromFile();
             while (reader.Peek() >= 0)
@@ -37,6 +41,18 @@ namespace Data
             reader.Close();
         }
 
+        public async Task<bool> CreateUser(IUser user)
+        {
+            try
+            {
+                Users.Add(user);
+                await WriteUsersInFile(user);
+                return true;
+            }
+            catch { return false; }
+
+        }
+
         public bool IsDuplicated(IUser user)
         {
             
@@ -45,12 +61,41 @@ namespace Data
 
         public StreamReader ReadUsersFromFile()
         {
-            var path = Directory.GetCurrentDirectory() + "/Files/Users.txt";
-
             FileStream fileStream = new FileStream(path, FileMode.Open);
 
             StreamReader reader = new StreamReader(fileStream);
             return reader;
+        }
+
+        private async Task<bool> WriteUsersInFile(IUser user)
+        {
+
+            try
+            {
+                var newUser = typeof(IUser).GetProperties().Select(x => x.GetValue(user).ToString()).ToArray();
+                string newLine = string.Join(',', newUser);
+
+                FileStream fileStream = new FileStream(path, FileMode.Open);
+
+                StreamReader reader = new StreamReader(fileStream);
+                string[] lines = await File.ReadAllLinesAsync(path);
+                var linesList = new List<string>(lines)
+                {
+                    newLine
+                };
+                lines = linesList.ToArray();
+
+                await File.WriteAllLinesAsync(path, lines);
+                reader.Close();
+                fileStream.Close();
+                return true;
+            } 
+            
+            catch {
+                return false;
+            }
+
+
         }
     }
 }

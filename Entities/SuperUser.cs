@@ -18,7 +18,9 @@ namespace Entities
         public string Email { get => email; set => email = value; }
         public string Address { get => address; set => address = value; }
         public string Phone { get => phone; set => phone = value; }
+        public string Type { get => userType; set => userType = value; }
         public decimal Money { get => money; set => money = value; }
+        
 
         public void AddGift()
         {

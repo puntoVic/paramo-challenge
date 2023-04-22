@@ -5,6 +5,7 @@ using Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Business
 {
@@ -17,9 +18,9 @@ namespace Business
             this.userDataAccess = userDataAccess;
         }
 
-        public Result CreateUser(IUser user)
+        public async Task<Result> CreateUser(IUser user)
         {
-            if (userDataAccess.CreateUser(user) == null)
+            if (await userDataAccess.CreateUser(user) == null)
             {
                 return new Result()
                 {

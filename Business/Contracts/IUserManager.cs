@@ -3,11 +3,12 @@ using Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Business.Contracts
 {
     public interface IUserManager
     {
-        public Result CreateUser(IUser user);
+        public Task<Result> CreateUser(IUser user);
     }
 }

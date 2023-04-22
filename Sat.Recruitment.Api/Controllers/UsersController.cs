@@ -32,7 +32,7 @@ namespace Sat.Recruitment.Api.Controllers
                     Errors = errors
                 };
 
-            return userManager.CreateUser(user);
+            return await userManager.CreateUser(user);
             
         }
 

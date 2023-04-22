@@ -13,6 +13,7 @@ namespace Entities.Interfaces
         public string Email { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
+        public string Type { get; set; }
         public decimal Money { get; set; }
 
         public void AddGift();
