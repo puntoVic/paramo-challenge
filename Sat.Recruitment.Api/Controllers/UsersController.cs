@@ -1,27 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Entities.Interfaces;
 using Common;
-using Sat.Recruitment.Api.Helpers;
-using Entities;
+using Common.Helpers;
+using Business.Contracts;
 
 namespace Sat.Recruitment.Api.Controllers
 {
     
-
     [ApiController]
     [Route("[controller]")]
     public partial class UsersController : ControllerBase
     {
 
-        private readonly List<IUser> _users = new List<IUser>();
-        public UsersController()
+        private readonly IUserManager userManager;
+        public UsersController(IUserManager userManager)
         {
+            this.userManager = userManager;
         }
 
         [HttpPost]
@@ -37,44 +32,8 @@ namespace Sat.Recruitment.Api.Controllers
                     Errors = errors
                 };
 
+            return userManager.CreateUser(user);
             
-            
-            try
-            {
-                var isDuplicated = false;
-                
-
-                if (!isDuplicated)
-                {
-                    Debug.WriteLine("User Created");
-                   
-                }
-                else
-                {
-                    Debug.WriteLine("The user is duplicated");
-
-                    return new Result()
-                    {
-                        IsSuccess = false,
-                        Errors = "The user is duplicated"
-                    };
-                }
-            }
-            catch
-            {
-                Debug.WriteLine("The user is duplicated");
-                return new Result()
-                {
-                    IsSuccess = false,
-                    Errors = "The user is duplicated"
-                };
-            }
-
-            return new Result()
-            {
-                IsSuccess = true,
-                Errors = "User Created"
-            };
         }
 
         
