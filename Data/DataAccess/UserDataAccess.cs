@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Data.DataAccess
 {
-    internal class UserDataAccess : IUserDataAccess
+    public class UserDataAccess : IUserDataAccess
     {
         private readonly IDataContext dataContext;
 

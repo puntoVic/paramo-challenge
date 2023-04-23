@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    internal class DataContext: IDataContext
+    public class DataContext: IDataContext
     {
         public List<IUser> Users { get; set; }
 
         readonly string path = string.Empty;
 
-        public DataContext()
+        public DataContext(string pathFile)
         {
-            path = Directory.GetCurrentDirectory() + "/Files/Users.txt";
+            path = Directory.GetCurrentDirectory() + pathFile;
             Users = new List<IUser>();
             var reader = ReadUsersFromFile();
             while (reader.Peek() >= 0)

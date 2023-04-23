@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Data.Contracts;
+using Data;
 
 using System;
 using System.Collections.Generic;
@@ -27,9 +29,16 @@ namespace Sat.Recruitment.Api
         {
             services.AddControllers();
             services.AddSwaggerGen();
+            AddDataProviders(services);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        private void AddDataProviders(IServiceCollection services)
+        {
+            services.AddScoped<IDataContext>(options =>
+                new DataContext(Configuration.GetConnectionString("FilePath")));
+        }
+
+            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -52,6 +61,8 @@ namespace Sat.Recruitment.Api
             {
                 endpoints.MapControllers();
             });
+
+            
         }
     }
 }

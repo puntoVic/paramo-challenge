@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Data.Contracts
 {
-    internal interface IDataContext
+    public interface IDataContext
     {
         public List<IUser> Users { get; set; }
         public bool IsDuplicated(IUser user);
