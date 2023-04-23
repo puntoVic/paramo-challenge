@@ -4,6 +4,7 @@ using Entities.Interfaces;
 using Common;
 using Common.Helpers;
 using Business.Contracts;
+using Entities.Definitions;
 
 namespace Sat.Recruitment.Api.Controllers
 {
@@ -21,8 +22,9 @@ namespace Sat.Recruitment.Api.Controllers
 
         [HttpPost]
         [Route("/create-user")]
-        public async Task<Result> CreateUser(IUser user)
+        public async Task<Result> CreateUser(User user)
         {
+            
             var errors = Validator.ValidateUser(user);
 
             if (errors != "")

@@ -1,6 +1,7 @@
 ﻿using Data.Contracts;
 using Entities;
 using Entities.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,33 +15,47 @@ namespace Data
 
         readonly string path = string.Empty;
 
+        FileStream fileStream;
+        StreamReader reader;
+
         public DataContext(string pathFile)
         {
-            path = Directory.GetCurrentDirectory() + pathFile;
-            Users = new List<IUser>();
-            var reader = ReadUsersFromFile();
-            while (reader.Peek() >= 0)
+            try
             {
-                var line = reader.ReadLineAsync().Result;
-                var register = line.Split(',');
-                IUser user = register[4] switch
+                Users = new List<IUser>();
+                path = Directory.GetCurrentDirectory() + pathFile;
+                
+                fileStream = new FileStream(path, FileMode.Open);
+
+                reader = new StreamReader(fileStream);
+                
+                while (reader?.Peek() >= 0)
                 {
-                    "NormalUser" => new NormalUser(),
-                    "SuperUser" => new SuperUser(),
-                    "Premium" => new PremiumUser(),
-                    _ => null,
-                };
-                user.Name = line.Split(',')[0].ToString();
-                user.Email = line.Split(',')[1].ToString();
-                user.Phone = line.Split(',')[2].ToString();
-                user.Address = line.Split(',')[3].ToString();
-                user.Money = decimal.Parse(line.Split(',')[5].ToString());
+                    var line = reader.ReadLineAsync().Result;
+                    var register = line.Split(',');
+                    IUser user = register[4].ToLower() switch
+                    {
+                        "normal" => new NormalUser(),
+                        "superuser" => new SuperUser(),
+                        "premium" => new PremiumUser(),
+                        _ => null,
+                    };
+                    user.Name = line.Split(',')[0].ToString();
+                    user.Email = line.Split(',')[1].ToString();
+                    user.Phone = line.Split(',')[2].ToString();
+                    user.Address = line.Split(',')[3].ToString();
+                    user.Money = decimal.Parse(line.Split(',')[5].ToString());
 
-                Users.Add(user);
+                    Users.Add(user);
+                }
+                reader?.Close();
+                fileStream?.Close();
             }
-            reader.Close();
+            catch(Exception e)
+            {
+                Users = null;
+            }
         }
-
         public async Task<bool> CreateUser(IUser user)
         {
             try
@@ -55,17 +70,10 @@ namespace Data
 
         public bool IsDuplicated(IUser user)
         {
-            
-            return Users.Where(x => x.Email == user.Email || x.Phone == user.Phone) != null; 
+            var result = Users.Where(x => x.Email == user.Email || x.Phone == user.Phone);
+            return result.Count() > 0; 
         }
 
-        public StreamReader ReadUsersFromFile()
-        {
-            FileStream fileStream = new FileStream(path, FileMode.Open);
-
-            StreamReader reader = new StreamReader(fileStream);
-            return reader;
-        }
 
         private async Task<bool> WriteUsersInFile(IUser user)
         {
@@ -75,9 +83,7 @@ namespace Data
                 var newUser = typeof(IUser).GetProperties().Select(x => x.GetValue(user).ToString()).ToArray();
                 string newLine = string.Join(',', newUser);
 
-                FileStream fileStream = new FileStream(path, FileMode.Open);
 
-                StreamReader reader = new StreamReader(fileStream);
                 string[] lines = await File.ReadAllLinesAsync(path);
                 var linesList = new List<string>(lines)
                 {
@@ -91,7 +97,7 @@ namespace Data
                 return true;
             } 
             
-            catch {
+            catch(Exception e) {
                 return false;
             }
 

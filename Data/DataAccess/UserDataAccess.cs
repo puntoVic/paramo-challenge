@@ -21,8 +21,15 @@ namespace Data.DataAccess
             {
                 return null;
             }
+
             user.Email = EmailValidations.NormalizeEmail(user.Email);
             user.AddGift();
+            var result = await dataContext.CreateUser(user);
+            if (!result)
+            {
+                return null;
+            }
+            
             return user;
 
         }

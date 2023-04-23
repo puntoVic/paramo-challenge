@@ -1,11 +1,12 @@
 ﻿using Entities;
+using Entities.Definitions;
 using Entities.Interfaces;
 
 namespace Common.Helpers
 {
     public static class Validator
     {
-        public static string ValidateUser(IUser user)
+        public static string ValidateUser(User user)
         {
             string errors = string.Empty;
             if (user.Name == null)

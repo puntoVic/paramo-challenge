@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Data.Contracts
 {
@@ -11,7 +12,8 @@ namespace Data.Contracts
     {
         public List<IUser> Users { get; set; }
         public bool IsDuplicated(IUser user);
-        public StreamReader ReadUsersFromFile();
-        
+        public Task<bool> CreateUser(IUser user);
+
+
     }
 }

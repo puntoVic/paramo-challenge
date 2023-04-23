@@ -12,6 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Data.DataAccess;
+using Business.Contracts;
+using Business;
 
 namespace Sat.Recruitment.Api
 {
@@ -30,16 +33,28 @@ namespace Sat.Recruitment.Api
             services.AddControllers();
             services.AddSwaggerGen();
             AddDataProviders(services);
+            AddDataAccessServices(services);
+            AddManagers(services);
         }
 
         private void AddDataProviders(IServiceCollection services)
         {
-            services.AddScoped<IDataContext>(options =>
+            services.AddSingleton<IDataContext>(options =>
                 new DataContext(Configuration.GetConnectionString("FilePath")));
         }
 
+        private void AddDataAccessServices(IServiceCollection services)
+        {
+            services.AddScoped<IUserDataAccess, UserDataAccess>();
+        }
+
+        private void AddManagers(IServiceCollection services)
+        {
+            services.AddScoped<IUserManager, UserManager>();
+        }
+
             // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

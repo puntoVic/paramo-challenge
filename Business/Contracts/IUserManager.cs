@@ -1,4 +1,5 @@
 ﻿using Common;
+using Entities.Definitions;
 using Entities.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,6 @@ namespace Business.Contracts
 {
     public interface IUserManager
     {
-        public Task<Result> CreateUser(IUser user);
+        public Task<Result> CreateUser(User user);
     }
 }
