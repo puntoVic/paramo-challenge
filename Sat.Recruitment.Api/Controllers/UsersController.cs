@@ -20,9 +20,14 @@ namespace Sat.Recruitment.Api.Controllers
             this.userManager = userManager;
         }
 
+        /// <summary>
+        /// API to create an user
+        /// </summary>
+        /// <param name="user">Model tu set user params</param>
+        /// <returns></returns>
         [HttpPost]
         [Route("/create-user")]
-        public async Task<Result> CreateUser(User user)
+        public async Task<Result> CreateUser(UserDefinition user)
         {
             
             var errors = Validator.ValidateUser(user);

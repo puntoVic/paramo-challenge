@@ -11,51 +11,41 @@ namespace Data
 {
     public class DataContext: IDataContext
     {
+        readonly string path = string.Empty;
+        readonly FileStream fileStream;
+        readonly StreamReader reader;
+
         public List<IUser> Users { get; set; }
 
-        readonly string path = string.Empty;
-
-        FileStream fileStream;
-        StreamReader reader;
-
+        /// <summary>
+        /// DataConntext constructo
+        /// </summary>
+        /// <param name="pathFile">
+        /// the path to find the Data File
+        /// </param>
         public DataContext(string pathFile)
         {
             try
             {
                 Users = new List<IUser>();
                 path = Directory.GetCurrentDirectory() + pathFile;
-                
                 fileStream = new FileStream(path, FileMode.Open);
-
                 reader = new StreamReader(fileStream);
-                
-                while (reader?.Peek() >= 0)
-                {
-                    var line = reader.ReadLineAsync().Result;
-                    var register = line.Split(',');
-                    IUser user = register[4].ToLower() switch
-                    {
-                        "normal" => new NormalUser(),
-                        "superuser" => new SuperUser(),
-                        "premium" => new PremiumUser(),
-                        _ => null,
-                    };
-                    user.Name = line.Split(',')[0].ToString();
-                    user.Email = line.Split(',')[1].ToString();
-                    user.Phone = line.Split(',')[2].ToString();
-                    user.Address = line.Split(',')[3].ToString();
-                    user.Money = decimal.Parse(line.Split(',')[5].ToString());
-
-                    Users.Add(user);
-                }
+                InitUserList();
                 reader?.Close();
                 fileStream?.Close();
             }
-            catch(Exception e)
+            catch (Exception)
             {
                 Users = null;
             }
         }
+
+        /// <summary>
+        /// Function to add an user in Data File
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<bool> CreateUser(IUser user)
         {
             try
@@ -67,17 +57,9 @@ namespace Data
             catch { return false; }
 
         }
-
-        public bool IsDuplicated(IUser user)
-        {
-            var result = Users.Where(x => x.Email == user.Email || x.Phone == user.Phone);
-            return result.Count() > 0; 
-        }
-
-
+        
         private async Task<bool> WriteUsersInFile(IUser user)
         {
-
             try
             {
                 var newUser = typeof(IUser).GetProperties().Select(x => x.GetValue(user).ToString()).ToArray();
@@ -97,11 +79,33 @@ namespace Data
                 return true;
             } 
             
-            catch(Exception e) {
+            catch (Exception)
+            {
                 return false;
             }
+        }
 
+        private void InitUserList()
+        {
+            while (reader?.Peek() >= 0)
+            {
+                var line = reader.ReadLineAsync().Result;
+                var register = line.Split(',');
+                IUser user = register[4].ToLower() switch
+                {
+                    "normal" => new NormalUser(),
+                    "superuser" => new SuperUser(),
+                    "premium" => new PremiumUser(),
+                    _ => null,
+                };
+                user.Name = line.Split(',')[0].ToString();
+                user.Email = line.Split(',')[1].ToString();
+                user.Phone = line.Split(',')[2].ToString();
+                user.Address = line.Split(',')[3].ToString();
+                user.Money = decimal.Parse(line.Split(',')[5].ToString());
 
+                Users.Add(user);
+            }
         }
     }
 }

@@ -11,7 +11,6 @@ namespace Data.Contracts
     public interface IDataContext
     {
         public List<IUser> Users { get; set; }
-        public bool IsDuplicated(IUser user);
         public Task<bool> CreateUser(IUser user);
 
 

@@ -5,6 +5,9 @@ namespace Common.Helpers
 {
     public static class EmailValidations
     {
+        /// <summary>
+        /// Function to normalize an email
+        /// </summary>
         public static string NormalizeEmail(string email)
         {
             //Normalize email

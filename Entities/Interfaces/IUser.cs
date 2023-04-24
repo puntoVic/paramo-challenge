@@ -16,6 +16,10 @@ namespace Entities.Interfaces
         public string Type { get; set; }
         public decimal Money { get; set; }
 
+        /// <summary>
+        /// Function for add gift when user is created
+        /// according the amount of money
+        /// </summary>
         public void AddGift();
 
     }

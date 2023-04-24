@@ -1,6 +1,9 @@
 ﻿namespace Entities.Definitions
 {
-    public class User
+    /// <summary>
+    /// UserDefinition model to set params in API
+    /// </summary>
+    public class UserDefinition
     {
         public string Name { get; set; }
         public string Email { get; set; }

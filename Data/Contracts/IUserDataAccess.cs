@@ -7,5 +7,7 @@ namespace Data.Contracts
     public interface IUserDataAccess
     {
         public Task<IUser> CreateUser(IUser user);
+
+        public bool IsDuplicated(IUser user);
     }
 }

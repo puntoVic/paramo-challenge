@@ -1,15 +1,7 @@
-using System;
-using System.Dynamic;
-using System.IO;
 using Business;
-using Business.Contracts;
 using Data;
-using Data.Contracts;
 using Data.DataAccess;
-using Entities;
 using Entities.Definitions;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 using Sat.Recruitment.Api.Controllers;
 
 using Xunit;
@@ -27,7 +19,7 @@ namespace Sat.Recruitment.Test
             var userDataAcces = new UserDataAccess(dataContex);
             var userManager = new UserManager(userDataAcces);
             
-            var user = new User()
+            var user = new UserDefinition()
             {
                 Name = "Mike",
                 Email = "mike@gmail.com",
@@ -41,7 +33,7 @@ namespace Sat.Recruitment.Test
             var result = await userController.CreateUser(user);
 
 
-            Assert.Equal(true, result.IsSuccess);
+            Assert.True(result.IsSuccess);
             Assert.Equal("User Created", result.Errors);
         }
 
@@ -52,7 +44,7 @@ namespace Sat.Recruitment.Test
             var userDataAcces = new UserDataAccess(dataContex);
             var userManager = new UserManager(userDataAcces);
             var userController = new UsersController(userManager);
-            var user = new User()
+            var user = new UserDefinition()
             {
                 Name = "Agustina",
                 Email = "Agustina@gmail.com",
@@ -65,7 +57,7 @@ namespace Sat.Recruitment.Test
             var result = userController.CreateUser(user).Result;
 
 
-            Assert.Equal(false, result.IsSuccess);
+            Assert.False(result.IsSuccess);
             Assert.Equal("The user is duplicated", result.Errors);
         }
     }

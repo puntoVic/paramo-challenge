@@ -1,12 +1,10 @@
 ﻿using Business.Contracts;
 using Common;
+using Common.Helpers;
 using Data.Contracts;
 using Entities;
 using Entities.Definitions;
 using Entities.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Business
@@ -20,7 +18,10 @@ namespace Business
             this.userDataAccess = userDataAccess;
         }
 
-        public async Task<Result> CreateUser(User user)
+        /// <summary>
+        /// Function to manager the user creation and results
+        /// </summary>
+        public async Task<Result> CreateUser(UserDefinition user)
         {
             try
             {
@@ -32,26 +33,28 @@ namespace Business
                         Errors = "The user is invalid"
                     };
                 }
-                IUser newUser = user.Type.ToLower() switch
+                
+                IUser newUser = DefinitionHelper.ToUser(user);
+                
+
+                if (userDataAccess.IsDuplicated(newUser))
                 {
-                    "normal" => new NormalUser(),
-                    "nuperUser" => new SuperUser(),
-                    "premium" => new PremiumUser(),
-                    _ => null,
-                };
-                newUser.Name = user.Name;
-                newUser.Email = user.Email;
-                newUser.Address = user.Address;
-                newUser.Phone = user.Phone;
-                newUser.Type = user.Type;
-                newUser.Money = user.Money;
+                    return new Result()
+                    {
+                        IsSuccess = false,
+                        Errors = "The user is duplicated"
+                    };
+                }
+
+                newUser.Email = EmailValidations.NormalizeEmail(newUser.Email);
+                newUser.AddGift();
 
                 if (await userDataAccess.CreateUser(newUser) == null)
                 {
                     return new Result()
                     {
                         IsSuccess = false,
-                        Errors = "The user is duplicated"
+                        Errors = "There is an error creating user"
                     };
                 }
                 return new Result()
@@ -65,7 +68,7 @@ namespace Business
                 return new Result()
                 {
                     IsSuccess = false,
-                    Errors = "invalid user"
+                    Errors = "There is an error creating user"
                 };
             }
             

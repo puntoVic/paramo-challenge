@@ -10,6 +10,6 @@ namespace Business.Contracts
 {
     public interface IUserManager
     {
-        public Task<Result> CreateUser(User user);
+        public Task<Result> CreateUser(UserDefinition user);
     }
 }
